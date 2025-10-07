@@ -512,9 +512,9 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 
 If you have any questions or need help with the project:
 
-- 📧 Email: your.email@example.com
-- 💬 Open an [Issue](https://github.com/yourusername/cinetrack-app/issues)
-- 📖 Check the [Wiki](https://github.com/yourusername/cinetrack-app/wiki)
+- 📧 Email: tonhanlk7103@gmail.com
+- 💬 Open an [Issue](https://github.com/nhantt71/cinetrack-app/issues)
+- 📖 Check the [Wiki](https://github.com/nhantt71/cinetrack-app/wiki)
 
 ---
 
@@ -522,6 +522,6 @@ If you have any questions or need help with the project:
 
 **⭐ If you found this project helpful, please give it a star! ⭐**
 
-Made with ❤️ and ☕ by [Your Name]
+Made with ❤️ and ☕ by [To Trong Nhan]
 
 </div>

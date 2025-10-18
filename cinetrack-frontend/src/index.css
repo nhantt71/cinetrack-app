@@ -1,0 +1,98 @@
+/* Import a clean, cinematic sans-serif */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Netflix-like dark theme tokens */
+  --background: 11 11 15;         /* #0b0b0f */
+  --foreground: 229 231 235;      /* slate-200 */
+
+  --muted: 148 163 184;           /* slate-400 */
+  --muted-foreground: 148 163 184;
+
+  --card: 17 17 23;               /* #111117 */
+  --card-foreground: 229 231 235;
+
+  --popover: 17 17 23;
+  --popover-foreground: 229 231 235;
+
+  --primary: 229 9 20;            /* Netflix red #e50914 */
+  --primary-foreground: 255 255 255;
+
+  --secondary: 34 34 38;          /* deep gray */
+  --secondary-foreground: 229 231 235;
+
+  --accent: 147 51 234;           /* purple accent */
+  --accent-foreground: 255 255 255;
+
+  --destructive: 239 68 68;
+  --destructive-foreground: 255 255 255;
+
+  --border: 38 38 45;
+  --input: 38 38 45;
+  --ring: 229 9 20;
+
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased; 
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  a {
+    color: rgb(var(--foreground));
+    text-decoration: none;
+  }
+}
+
+/* Components */
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .hover-elevate {
+    transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  }
+  .hover-elevate:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .active-elevate-2:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .toggle-elevate[data-active="true"] {
+    background-color: rgba(255,255,255,0.08);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.16);
+    border-radius: 9999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.06);
+  }
+}

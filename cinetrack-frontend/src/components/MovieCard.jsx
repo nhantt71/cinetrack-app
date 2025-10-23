@@ -2,6 +2,7 @@ import { Star, Plus, Check, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function MovieCard({
   id,
@@ -18,7 +19,7 @@ export default function MovieCard({
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(isInWatchlist);
-
+  const navigate = useNavigate();
   const handleWatchlistToggle = (e) => {
     e.stopPropagation();
     if (inWatchlist) {
@@ -33,8 +34,8 @@ export default function MovieCard({
   };
 
   const handleClick = () => {
-    onClick?.();
     console.log(`Clicked movie: ${title}`);
+    navigate(`/movie/${id}`);
   };
 
   return (
@@ -48,7 +49,7 @@ export default function MovieCard({
       <div className="aspect-[2/3] bg-muted relative">
         {posterPath ? (
           <img
-            src={posterPath}
+            src={`https://image.tmdb.org/t/p/original${posterPath}`}
             alt={title}
             className="h-full w-full object-cover"
             loading="lazy"
@@ -97,7 +98,7 @@ export default function MovieCard({
                 className="flex-1 bg-primary hover:bg-primary/90"
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log(`Play ${title}`);
+                  handleClick();
                 }}
                 data-testid={`button-play-${id}`}
               >

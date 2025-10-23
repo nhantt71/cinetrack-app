@@ -1,28 +1,141 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MovieCard from "@/components/MovieCard";
 import EmptyState from "@/components/EmptyState";
 import { List, CheckCircle } from "lucide-react";
 import { useLocation } from "wouter";
+import { endpoints } from "@/services/backendApi";
+import { AuthService } from "@/services/AuthService";
 
-//todo: remove mock functionality
-const mockWantToWatch = [
-  { id: 3, title: "Inception", posterPath: "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", rating: 8.8, year: "2010", status: "want_to_watch" },
-  { id: 4, title: "Interstellar", posterPath: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", rating: 8.6, year: "2014", status: "want_to_watch" },
-  { id: 5, title: "The Matrix", posterPath: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg", rating: 8.7, year: "1999", status: "want_to_watch" },
-];
-
-//todo: remove mock functionality
-const mockWatched = [
-  { id: 2, title: "The Dark Knight", posterPath: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg", rating: 9.0, year: "2008", status: "watched", userRating: 9 },
-  { id: 1, title: "The Shawshank Redemption", posterPath: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg", rating: 8.7, year: "1994", status: "watched", userRating: 10 },
-  { id: 7, title: "Pulp Fiction", posterPath: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg", rating: 8.9, year: "1994", status: "watched", userRating: 8 },
-];
 
 export default function WatchlistPage() {
   const [, setLocation] = useLocation();
-  const [wantToWatch, setWantToWatch] = useState(mockWantToWatch);
-  const [watched, setWatched] = useState(mockWatched);
+  const [wantToWatch, setWantToWatch] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchWatchlist = async (userId) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const token = AuthService.getToken();
+      if (!token) {
+        setError("Not authenticated");
+        return;
+      }
+
+      const response = await fetch(endpoints.getWatchlist(userId), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const watchlistData = await response.json();
+        
+        // Classify movies into want_to_watch and watched
+        const wantToWatchItems = watchlistData.filter(item => item.Status === "want_to_watch");
+        const watchedItems = watchlistData.filter(item => item.Status === "watched");
+        
+        // Fetch movie details for each item
+        const fetchMovieDetails = async (movieId) => {
+          try {
+            const response = await fetch(endpoints.getMovieDetails(movieId), {
+              headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            });
+            if (response.ok) {
+              return await response.json();
+            }
+          } catch (err) {
+            console.error(`Failed to fetch details for movie ${movieId}:`, err);
+          }
+          return null;
+        };
+        
+        // Fetch details for want to watch movies
+        const wantToWatchMovies = await Promise.all(
+          wantToWatchItems.map(async (item) => {
+            const movieDetails = await fetchMovieDetails(item.MovieID);
+            if (movieDetails && movieDetails.data) {
+              const movie = movieDetails.data;
+              return {
+                id: movie.id,
+                title: movie.title,
+                posterPath: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+                rating: movie.vote_average,
+                year: movie.release_date ? movie.release_date.split('-')[0] : null,
+                overview: movie.overview,
+                backdropPath: movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : null,
+                genres: movie.genres?.map(genre => genre.name) || [],
+                runtime: movie.runtime,
+                watchlistStatus: item.Status,
+                addedAt: item.AddedAt
+              };
+            }
+            return null;
+          })
+        ).then(movies => movies.filter(movie => movie !== null));
+        
+        // Fetch details for watched movies
+        const watchedMovies = await Promise.all(
+          watchedItems.map(async (item) => {
+            const movieDetails = await fetchMovieDetails(item.MovieID);
+            if (movieDetails && movieDetails.data) {
+              const movie = movieDetails.data;
+              return {
+                id: movie.id,
+                title: movie.title,
+                posterPath: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+                rating: movie.vote_average,
+                year: movie.release_date ? movie.release_date.split('-')[0] : null,
+                overview: movie.overview,
+                backdropPath: movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : null,
+                genres: movie.genres?.map(genre => genre.name) || [],
+                runtime: movie.runtime,
+                watchlistStatus: item.Status,
+                addedAt: item.AddedAt
+              };
+            }
+            return null;
+          })
+        ).then(movies => movies.filter(movie => movie !== null));
+        
+        setWantToWatch(wantToWatchMovies);
+        setWatched(watchedMovies);
+      } else {
+        setError("Failed to fetch watchlist");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+      console.error("Watchlist fetch error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Get UserID from URL or from authenticated user
+    const pathParts = window.location.pathname.split('/');
+    const userIdFromUrl = pathParts[pathParts.length - 1];
+    
+    if (userIdFromUrl && userIdFromUrl !== 'watchlist') {
+      fetchWatchlist(userIdFromUrl);
+    } else {
+      // Fallback: get user ID from auth service
+      const user = AuthService.getCurrentUser();
+      if (user && user.UserID) {
+        fetchWatchlist(user.UserID);
+      } else {
+        setError("User not found");
+        setIsLoading(false);
+      }
+    }
+  }, []);
 
   const handleMovieClick = (movieId) => {
     setLocation(`/movie/${movieId}`);
@@ -35,6 +148,41 @@ export default function WatchlistPage() {
       setWatched(watched.filter((m) => m.id !== movieId));
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
+          <h1 className="text-4xl font-display font-bold mb-8">My Watchlist</h1>
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading your watchlist...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
+          <h1 className="text-4xl font-display font-bold mb-8">My Watchlist</h1>
+          <div className="text-center py-12">
+            <p className="text-destructive mb-4">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="text-primary hover:text-primary/80"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -62,7 +210,7 @@ export default function WatchlistPage() {
                     {...movie}
                     isInWatchlist={true}
                     onClick={() => handleMovieClick(movie.id)}
-                    onRemoveFromWatchlist={() => handleRemoveFromWatchlist(movie.id, "want_to_watch")}
+                    onRemoveFromWatchlist={() => handleRemoveFromWatchlist(movie.id, movie.watchlistStatus)}
                   />
                 ))}
               </div>
@@ -86,7 +234,7 @@ export default function WatchlistPage() {
                     {...movie}
                     isInWatchlist={true}
                     onClick={() => handleMovieClick(movie.id)}
-                    onRemoveFromWatchlist={() => handleRemoveFromWatchlist(movie.id, "watched")}
+                    onRemoveFromWatchlist={() => handleRemoveFromWatchlist(movie.id, movie.watchlistStatus)}
                   />
                 ))}
               </div>

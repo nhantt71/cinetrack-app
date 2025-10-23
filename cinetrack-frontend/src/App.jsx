@@ -5,7 +5,10 @@ import MovieDetailPage from "./pages/MovieDetailPage";
 import SearchPage from "./pages/SearchPage";
 import WatchlistPage from "./pages/WatchlistPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 import AuthPage from "./pages/AuthPage";
+import WatchlistIndex from "./pages/WatchlistIndex";
+import FavoritesIndex from "./pages/FavoritesIndex";
 
 function App() {
   return (
@@ -17,8 +20,24 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/movie/:movieId" element={<MovieDetailPage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/watchlist/:userId" element={<WatchlistPage />} />
-            <Route path="/favorites/:userId" element={<FavoritesPage />} />
+            <Route path="/watchlist" element={<WatchlistIndex />} />
+            <Route path="/favorites" element={<FavoritesIndex />} />
+            <Route
+              path="/watchlist/:userId"
+              element={
+                <ProtectedRoute>
+                  <WatchlistPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/favorites/:userId"
+              element={
+                <ProtectedRoute>
+                  <FavoritesPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/auth" element={<AuthPage />} />
           </Routes>
         </main>

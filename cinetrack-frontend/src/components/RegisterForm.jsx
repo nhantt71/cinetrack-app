@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { endpoints } from "@/services/backendApi";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import SuccessNotification from "./SuccessNotification";
 
 export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,10 +70,9 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
       const data = await response.json();
 
       if (response.ok) {
-        // Store user data in localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
-        onSuccess(data.user);
+        // Show success message instead of immediately redirecting
+        // Don't store token/user data yet - let user login first
+        setIsSuccess(true);
       } else {
         setError(data.message || "Registration failed. Please try again.");
       }
@@ -81,6 +82,21 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
       setIsLoading(false);
     }
   };
+
+  const handleContinueToLogin = () => {
+    onSwitchToLogin();
+  };
+
+  // Show success notification if registration was successful
+  if (isSuccess) {
+    return (
+      <SuccessNotification
+        message="Account created successfully! You can now sign in with your credentials."
+        onContinue={handleContinueToLogin}
+        onButtonText="Go to Sign In"
+      />
+    );
+  }
 
   return (
     <div className="w-full max-w-md mx-auto">

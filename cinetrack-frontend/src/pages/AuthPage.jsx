@@ -22,6 +22,11 @@ export default function AuthPage() {
     navigate("/");
   };
 
+  const handleRegistrationSuccess = () => {
+    // Don't redirect immediately after registration
+    // Let the RegisterForm handle the success flow
+  };
+
   const switchToRegister = () => {
     setIsLogin(false);
   };
@@ -41,7 +46,7 @@ export default function AuthPage() {
             />
           ) : (
             <RegisterForm 
-              onSuccess={handleAuthSuccess}
+              onSuccess={handleRegistrationSuccess}
               onSwitchToLogin={switchToLogin}
             />
           )}

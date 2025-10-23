@@ -2,6 +2,8 @@ export const API_URL = "https://haytmwv47e.execute-api.ap-southeast-1.amazonaws.
 
 export const endpoints = {
   addToFavorites: (userId, movieId) => `${API_URL}/favorites/${userId}/${movieId}`,
+  getFavorites: (userId) => `${API_URL}/favorites/${userId}`,
+  removeFromFavorites: (userId, movieId) => `${API_URL}/favorites/${userId}/${movieId}`,
   getGenres: `${API_URL}/genres/list`,
   getTrendingMovies: (time_window) => `${API_URL}/movies/trending/${time_window}`,
   getMovieDetails: (movieId) => `${API_URL}/movies/${movieId}/details`,

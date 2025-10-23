@@ -40,10 +40,18 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }) {
       const data = await response.json();
 
       if (response.ok) {
+        // Handle different backend response structures
+        const user = data.user || data;
+        const token = data.token || user.Token;
+        
         // Store user data in localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
-        onSuccess(data.user);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+        
+        // Dispatch custom event to notify Header of auth change
+        window.dispatchEvent(new CustomEvent('authChange'));
+        
+        onSuccess(user);
       } else {
         setError(data.message || "Login failed. Please try again.");
       }

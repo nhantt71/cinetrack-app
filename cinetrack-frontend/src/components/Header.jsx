@@ -1,10 +1,11 @@
-import { Search, Film, Heart, List, LogOut, User } from "lucide-react";
+import { Search, Film, List, LogOut, User } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { endpoints } from "@/services/backendApi";
+import { AuthService } from "@/services/AuthService";
 
 export default function Header() {
   const [location] = useLocation();
@@ -13,12 +14,48 @@ export default function Header() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is logged in
+  // Check if user is logged in and token is valid
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
+    const checkAuthStatus = () => {
+      const userData = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+      
+      console.log("Header: Checking auth status", { userData: !!userData, token: !!token, isAuthenticated: AuthService.isAuthenticated() });
+      
+      if (userData && token && AuthService.isAuthenticated()) {
+        const user = JSON.parse(userData);
+        setUser(user);
+        console.log("Header: User authenticated", user);
+      } else {
+        // Clear invalid data
+        if (userData || token) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+        }
+        setUser(null);
+        console.log("Header: User not authenticated");
+      }
+    };
+
+    checkAuthStatus();
+    
+    // Listen for storage changes (e.g., when user logs in from another tab)
+    const handleStorageChange = () => {
+      checkAuthStatus();
+    };
+    
+    // Listen for custom auth events (for same-tab login)
+    const handleAuthChange = () => {
+      checkAuthStatus();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('authChange', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -42,6 +79,10 @@ export default function Header() {
       localStorage.removeItem("token");
       setUser(null);
       setIsLoggingOut(false);
+      
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('authChange'));
+      
       navigate("/");
     }
   };
@@ -126,28 +167,21 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           {user ? (
-            <>
-              <Link href="/favorites" data-testid="link-favorites">
-                <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-                  <Heart className="h-5 w-5" />
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2">
-                <span className="hidden sm:block text-sm text-muted-foreground">
-                  Welcome, {user.name}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="flex items-center gap-2"
-                >
-                  <LogOut className="h-4 w-4" />
-                  {isLoggingOut ? "Signing out..." : "Sign out"}
-                </Button>
-              </div>
-            </>
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:block text-sm text-muted-foreground">
+                Welcome, {user.Name || user.Email || 'User'}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                {isLoggingOut ? "Signing out..." : "Sign out"}
+              </Button>
+            </div>
           ) : (
             <div className="flex items-center gap-2">
               <Button

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import MovieCard from "./MovieCard";
 import { useRef, useState } from "react";
 
-export default function MovieCarousel({ title, movies, onMovieClick }) {
+export default function MovieCarousel({ title, movies = [], onMovieClick, onAddToWatchlist, onRemoveFromWatchlist }) {
   const scrollContainerRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -57,9 +57,14 @@ export default function MovieCarousel({ title, movies, onMovieClick }) {
           onScroll={checkArrows}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {movies.map((movie) => (
+          {(Array.isArray(movies) ? movies : []).map((movie) => (
             <div key={movie.id} className="flex-none w-40 sm:w-48 md:w-52 snap-start">
-              <MovieCard {...movie} onClick={() => onMovieClick?.(movie.id)} />
+              <MovieCard 
+                {...movie} 
+                onClick={() => onMovieClick?.(movie.id)}
+                onAddToWatchlist={() => onAddToWatchlist?.(movie.id)}
+                onRemoveFromWatchlist={() => onRemoveFromWatchlist?.(movie.id)}
+              />
             </div>
           ))}
         </div>

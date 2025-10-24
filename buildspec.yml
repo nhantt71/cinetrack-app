@@ -2,29 +2,29 @@ version: 0.2
 
 env:
   variables:
-    S3_BUCKET: "cinetrack-frontend"
+    S3_BUCKET: "cinetrack-app-frontend"
     CLOUDFRONT_DISTRIBUTION_ID: "E23WYKPFGKN4V4"
 
 phases:
   install:
     runtime-versions:
-      nodejs: 22
+      nodejs: 18
     commands:
-      - echo "Install deps"
+      - echo "Installing dependencies..."
       - cd frontend
       - npm ci
 
   build:
     commands:
-      - echo "Build frontend"
+      - echo "Building frontend..."
       - npm run build
 
   post_build:
     commands:
-      - echo "Sync to S3"
-      - aws s3 sync frontend/build s3://$S3_BUCKET/ --delete
-      - echo "Create CloudFront invalidation"
-      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*" || echo "Invalidation failed (not critical)"
+      - echo "Deploying to S3..."
+      - aws s3 sync build s3://$S3_BUCKET/ --delete
+      - echo "Creating CloudFront invalidation..."
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*" || echo "⚠️ Invalidation failed (non-critical)"
 
 artifacts:
   files:

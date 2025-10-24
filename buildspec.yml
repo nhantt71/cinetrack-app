@@ -1,32 +1,20 @@
 version: 0.2
 
-env:
-  variables:
-    S3_BUCKET: "cinetrack-app-frontend"   # tên bucket của bạn
-    CLOUDFRONT_DISTRIBUTION_ID: "E23WYKPFGKN4V4"  # ID thật của CloudFront
-
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Installing dependencies..."
-      - cd frontend
-      - npm ci
+      - echo Installing dependencies...
+      - npm install
 
   build:
     commands:
-      - echo "Building project..."
+      - echo Building the React app...
       - npm run build
-
-  post_build:
-    commands:
-      - echo "Deploying to S3..."
-      - aws s3 sync build/ s3://$S3_BUCKET --delete
-      - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
 
 artifacts:
   files:
     - '**/*'
-  base-directory: frontend/build
+  base-directory: build
+  discard-paths: yes

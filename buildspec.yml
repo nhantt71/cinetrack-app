@@ -8,7 +8,7 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 22
     commands:
       - echo "Installing dependencies..."
       - cd frontend
@@ -22,9 +22,9 @@ phases:
   post_build:
     commands:
       - echo "Deploying to S3..."
-      - aws s3 sync build s3://$S3_BUCKET/ --delete
+      - aws s3 sync build/ s3://$S3_BUCKET --delete
       - echo "Creating CloudFront invalidation..."
-      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*" || echo "⚠️ Invalidation failed (non-critical)"
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
 
 artifacts:
   files:

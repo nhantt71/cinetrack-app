@@ -22,4 +22,4 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: cinetrack-frontend/build
+  base-directory: build

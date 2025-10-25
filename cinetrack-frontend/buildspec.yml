@@ -5,13 +5,22 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing dependencies...
-      - npm ci
+      - echo "Installing dependencies..."
+      - cd cinetrack-frontend
+      - rm -rf node_modules package-lock.json
+      - npm install --legacy-peer-deps
+
   build:
     commands:
-      - echo Building project...
+      - echo "Building React app..."
+      - cd cinetrack-frontend
       - npm run build
+
+  post_build:
+    commands:
+      - echo "Build completed successfully!"
+
 artifacts:
   files:
     - '**/*'
-  base-directory: out
+  base-directory: cinetrack-frontend/build

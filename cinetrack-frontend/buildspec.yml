@@ -6,14 +6,12 @@ phases:
       nodejs: 18
     commands:
       - echo "Installing dependencies..."
-      - cd cinetrack-frontend
       - rm -rf node_modules package-lock.json
       - npm install --legacy-peer-deps
 
   build:
     commands:
       - echo "Building React app..."
-      - cd cinetrack-frontend
       - npm run build
 
   post_build:
@@ -23,4 +21,4 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: cinetrack-frontend/build
+  base-directory: build

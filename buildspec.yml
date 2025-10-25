@@ -5,15 +5,21 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing dependencies...
-      - npm ci || npm install --legacy-peer-deps
+      - echo "Installing dependencies..."
+      - cd frontend
+      - rm -rf node_modules package-lock.json
+      - npm install --legacy-peer-deps
 
   build:
     commands:
-      - echo Building the React app...
+      - echo "Building React app..."
       - npm run build
+
+  post_build:
+    commands:
+      - echo "Build completed successfully!"
 
 artifacts:
   files:
     - '**/*'
-  base-directory: build
+  base-directory: frontend/build

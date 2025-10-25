@@ -12,13 +12,13 @@ phases:
   build:
     commands:
       - echo "Building React app..."
+      - cd cinetrack-frontend
       - npm run build
-
-  post_build:
-    commands:
+      - echo "Copying build to root..."
+      - cp -r build ../build
       - echo "Build completed successfully!"
 
 artifacts:
   files:
     - '**/*'
-  base-directory: cinetrack-frontend/build
+  base-directory: build

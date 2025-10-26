@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Plus, Check, Play, Eye } from "lucide-react";
 import MovieCarousel from "@/components/MovieCarousel";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { endpoints } from "@/services/backendApi";
 import { AuthService } from "@/services/AuthService";
 
@@ -20,7 +20,7 @@ const similarMovies = [
 ];
 
 export default function MovieDetailPage() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [inWatchlist, setInWatchlist] = useState(false);
   const [watchlistStatus, setWatchlistStatus] = useState(null); // "want_to_watch" or "watched"
   const [isLoading, setIsLoading] = useState(true);
@@ -269,7 +269,7 @@ export default function MovieDetailPage() {
   };
 
   const handleSimilarMovieClick = (movieId) => {
-    navigate(`/movie/${movieId}`);
+    setLocation(`/movie/${movieId}`);
   };
 
   if (isLoading) {

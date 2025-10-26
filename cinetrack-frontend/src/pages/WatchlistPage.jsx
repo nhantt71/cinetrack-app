@@ -3,16 +3,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MovieCard from "@/components/MovieCard";
 import EmptyState from "@/components/EmptyState";
 import { List, CheckCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { endpoints } from "@/services/backendApi";
 import { AuthService } from "@/services/AuthService";
 
 
 export default function WatchlistPage() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [wantToWatch, setWantToWatch] = useState([]);
   const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // Temporarily set to false for debugging
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchWatchlist = async (userId) => {
@@ -20,6 +20,11 @@ export default function WatchlistPage() {
       setIsLoading(true);
       setError(null);
       
+      const token = AuthService.getToken();
+      if (!token) {
+        setError("Not authenticated");
+        return;
+      }
 
       const response = await fetch(endpoints.getWatchlist(userId), {
         headers: {
@@ -30,33 +35,23 @@ export default function WatchlistPage() {
       if (response.ok) {
         const watchlistData = await response.json();
 
-        console.log('Raw watchlist data:', watchlistData);
+        console.log(watchlistData);
         
         // Classify movies into want_to_watch and watched
         const wantToWatchItems = watchlistData.filter(item => item.Status === "want_to_watch");
         const watchedItems = watchlistData.filter(item => item.Status === "watched");
         
-        console.log('Want to watch items:', wantToWatchItems);
-        console.log('Watched items:', watchedItems);
-        
         // Fetch movie details for each item
         const fetchMovieDetails = async (movieId) => {
           try {
-            console.log(`Fetching details for movie ${movieId}`);
-            const token = AuthService.getToken();
             const response = await fetch(endpoints.getMovieDetails(movieId), {
               headers: {
-                ...(token && { "Authorization": `Bearer ${token}` }),
+                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             });
-            console.log(`Response status for movie ${movieId}:`, response.status);
             if (response.ok) {
-              const movieData = await response.json();
-              console.log(`Movie data for ${movieId}:`, movieData);
-              return movieData;
-            } else {
-              console.error(`Failed to fetch movie ${movieId}, status: ${response.status}`);
+              return await response.json();
             }
           } catch (err) {
             console.error(`Failed to fetch details for movie ${movieId}:`, err);
@@ -68,10 +63,8 @@ export default function WatchlistPage() {
         const wantToWatchMovies = await Promise.all(
           wantToWatchItems.map(async (item) => {
             const movieDetails = await fetchMovieDetails(item.MovieID);
-            console.log('Want to watch - Movie details structure for item:', item, 'details:', movieDetails);
             if (movieDetails && movieDetails.data) {
               const movie = movieDetails.data;
-              console.log('Processing want to watch movie:', movie);
               return {
                 id: movie.id,
                 title: movie.title,
@@ -94,7 +87,6 @@ export default function WatchlistPage() {
         const watchedMovies = await Promise.all(
           watchedItems.map(async (item) => {
             const movieDetails = await fetchMovieDetails(item.MovieID);
-            console.log('Watched - Movie details structure for item:', item, 'details:', movieDetails);
             if (movieDetails && movieDetails.data) {
               const movie = movieDetails.data;
               return {
@@ -115,16 +107,8 @@ export default function WatchlistPage() {
           })
         ).then(movies => movies.filter(movie => movie !== null));
         
-        console.log('Processed want to watch movies:', wantToWatchMovies);
-        console.log('Processed watched movies:', watchedMovies);
-        
         setWantToWatch(wantToWatchMovies);
         setWatched(watchedMovies);
-        
-        console.log('Final state - wantToWatch length:', wantToWatchMovies.length);
-        console.log('Final state - watched length:', watchedMovies.length);
-        console.log('Setting state - wantToWatch:', wantToWatchMovies);
-        console.log('Setting state - watched:', watchedMovies);
       } else {
         setError("Failed to fetch watchlist");
       }
@@ -132,27 +116,20 @@ export default function WatchlistPage() {
       setError("Network error. Please try again.");
       console.error("Watchlist fetch error:", err);
     } finally {
-      console.log('Setting isLoading to false');
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // Get UserID from URL hash or from authenticated user
-    const hashPath = window.location.hash.substring(1); // Remove the # symbol
-    const pathParts = hashPath.split('/');
+    // Get UserID from URL or from authenticated user
+    const pathParts = window.location.pathname.split('/');
     const userIdFromUrl = pathParts[pathParts.length - 1];
     
-    console.log('Hash path:', hashPath);
-    console.log('Path parts:', pathParts);
-    console.log('User ID from URL:', userIdFromUrl);
-    
-    if (userIdFromUrl && userIdFromUrl !== 'watchlist' && userIdFromUrl.length > 10) {
+    if (userIdFromUrl && userIdFromUrl !== 'watchlist') {
       fetchWatchlist(userIdFromUrl);
     } else {
       // Fallback: get user ID from auth service
       const user = AuthService.getCurrentUser();
-      console.log('User from auth service:', user);
       if (user && user.UserID) {
         fetchWatchlist(user.UserID);
       } else {
@@ -163,7 +140,7 @@ export default function WatchlistPage() {
   }, []);
 
   const handleMovieClick = (movieId) => {
-    navigate(`/movie/${movieId}`);
+    setLocation(`/movie/${movieId}`);
   };
 
   const handleRemoveFromWatchlist = (movieId, status) => {
@@ -174,8 +151,6 @@ export default function WatchlistPage() {
     }
   };
 
-  console.log('Render - isLoading:', isLoading, 'wantToWatch.length:', wantToWatch.length, 'watched.length:', watched.length, 'error:', error);
-  
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -247,7 +222,7 @@ export default function WatchlistPage() {
                 title="No movies in your watchlist"
                 description="Start adding movies you want to watch to keep track of them here."
                 actionLabel="Browse Movies"
-                onAction={() => navigate("/search")}
+                onAction={() => setLocation("/search")}
               />
             )}
           </TabsContent>
@@ -271,7 +246,7 @@ export default function WatchlistPage() {
                 title="No watched movies yet"
                 description="Mark movies as watched to keep track of what you've seen and rate them."
                 actionLabel="Browse Movies"
-                onAction={() => navigate("/search")}
+                onAction={() => setLocation("/search")}
               />
             )}
           </TabsContent>

@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import MovieCard from "@/components/MovieCard";
 import EmptyState from "@/components/EmptyState";
 import { Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { endpoints } from "@/services/backendApi";
 import { AuthService } from "@/services/AuthService";
 
 export default function FavoritesPage() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -87,21 +87,15 @@ export default function FavoritesPage() {
   };
 
   useEffect(() => {
-    // Get UserID from URL hash or from authenticated user
-    const hashPath = window.location.hash.substring(1); // Remove the # symbol
-    const pathParts = hashPath.split('/');
+    // Get UserID from URL or from authenticated user
+    const pathParts = window.location.pathname.split('/');
     const userIdFromUrl = pathParts[pathParts.length - 1];
     
-    console.log('Hash path:', hashPath);
-    console.log('Path parts:', pathParts);
-    console.log('User ID from URL:', userIdFromUrl);
-    
-    if (userIdFromUrl && userIdFromUrl !== 'favorites' && userIdFromUrl.length > 10) {
+    if (userIdFromUrl && userIdFromUrl !== 'favorites') {
       fetchFavorites(userIdFromUrl);
     } else {
       // Fallback: get user ID from auth service
       const user = AuthService.getCurrentUser();
-      console.log('User from auth service:', user);
       if (user && user.UserID) {
         fetchFavorites(user.UserID);
       } else {
@@ -112,7 +106,7 @@ export default function FavoritesPage() {
   }, []);
 
   const handleMovieClick = (movieId) => {
-    navigate(`/movie/${movieId}`);
+    setLocation(`/movie/${movieId}`);
   };
 
   const handleRemoveFavorite = async (movieId) => {
@@ -215,7 +209,7 @@ export default function FavoritesPage() {
             title="No favorites yet"
             description="Save your favorite movies to find them quickly here."
             actionLabel="Browse Movies"
-            onAction={() => navigate("/search")}
+            onAction={() => setLocation("/search")}
           />
         )}
       </div>

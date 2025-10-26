@@ -1,13 +1,14 @@
 import { Search, Film, List, LogOut, User } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { endpoints } from "@/services/backendApi";
 import { AuthService } from "@/services/AuthService";
 
 export default function Header() {
-  const location = useLocation();
+  const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -97,7 +98,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         <div className="flex items-center gap-6 md:gap-8">
-          <Link to="/" data-testid="link-home">
+          <Link href="/" data-testid="link-home">
             <div className="flex items-center gap-2 cursor-pointer hover-elevate active-elevate-2 px-2 py-1 rounded-md -ml-2">
               <Film className="h-7 w-7 text-primary" />
               <span className="text-xl font-display font-bold" onClick={() => navigate("/")}>CineTrack</span>
@@ -105,20 +106,20 @@ export default function Header() {
           </Link>
           
           <nav className="hidden md:flex items-center gap-1">
-            <Link to="/" data-testid="link-home-nav">
+            <Link href="/" data-testid="link-home-nav">
               <Button 
-                variant={location.pathname === "/" ? "secondary" : "ghost"} 
+                variant={location === "/" ? "secondary" : "ghost"} 
                 size="sm"
                 className="toggle-elevate"
-                data-active={location.pathname === "/"}
+                data-active={location === "/"}
                 onClick={() => navigate("/")} 
               >
                 Home
               </Button>
             </Link>
-            <Link to="/search" data-testid="link-search">
+            <Link href="/search" data-testid="link-search">
               <Button 
-                variant={location.pathname === "/search" ? "secondary" : "ghost"} 
+                variant={location === "/search" ? "secondary" : "ghost"} 
                 size="sm"
                 className="toggle-elevate"
                 onClick={() => navigate("/search")}
@@ -126,9 +127,9 @@ export default function Header() {
                 Browse
               </Button>
             </Link>
-            <Link to="/favorites" data-testid="link-favorites">
+            <Link href="/favorites" data-testid="link-favorites">
               <Button 
-                variant={location.pathname === "/favorites" ? "secondary" : "ghost"} 
+                variant={location === "/favorites" ? "secondary" : "ghost"} 
                 size="sm"
                 className="toggle-elevate"
                 onClick={() => navigate("/favorites")}
@@ -136,9 +137,9 @@ export default function Header() {
                 Favorites
               </Button>
             </Link>
-            <Link to="/watchlist" data-testid="link-watchlist">
+            <Link href="/watchlist" data-testid="link-watchlist">
               <Button 
-                variant={location.pathname === "/watchlist" ? "secondary" : "ghost"} 
+                variant={location === "/watchlist" ? "secondary" : "ghost"} 
                 size="sm"
                 className="toggle-elevate"
                 onClick={() => navigate("/watchlist")}

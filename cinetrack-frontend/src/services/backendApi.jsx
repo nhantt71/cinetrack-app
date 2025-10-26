@@ -1,5 +1,4 @@
-const REACT_APP_API_BASE = "https://haytmwv47e.execute-api.ap-southeast-1.amazonaws.com";
-export const API_URL = `${REACT_APP_API_BASE}/dev`;
+export const API_URL = "https://haytmwv47e.execute-api.ap-southeast-1.amazonaws.com/dev";
 
 export const endpoints = {
   addToFavorites: (userId, movieId) => `${API_URL}/favorites/${userId}/${movieId}`,

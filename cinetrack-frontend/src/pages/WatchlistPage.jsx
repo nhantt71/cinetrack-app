@@ -20,11 +20,6 @@ export default function WatchlistPage() {
       setIsLoading(true);
       setError(null);
       
-      const token = AuthService.getToken();
-      if (!token) {
-        setError("Not authenticated");
-        return;
-      }
 
       const response = await fetch(endpoints.getWatchlist(userId), {
         headers: {
@@ -46,7 +41,6 @@ export default function WatchlistPage() {
           try {
             const response = await fetch(endpoints.getMovieDetails(movieId), {
               headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             });
@@ -121,15 +115,21 @@ export default function WatchlistPage() {
   };
 
   useEffect(() => {
-    // Get UserID from URL or from authenticated user
-    const pathParts = window.location.pathname.split('/');
+    // Get UserID from URL hash or from authenticated user
+    const hashPath = window.location.hash.substring(1); // Remove the # symbol
+    const pathParts = hashPath.split('/');
     const userIdFromUrl = pathParts[pathParts.length - 1];
     
-    if (userIdFromUrl && userIdFromUrl !== 'watchlist') {
+    console.log('Hash path:', hashPath);
+    console.log('Path parts:', pathParts);
+    console.log('User ID from URL:', userIdFromUrl);
+    
+    if (userIdFromUrl && userIdFromUrl !== 'watchlist' && userIdFromUrl.length > 10) {
       fetchWatchlist(userIdFromUrl);
     } else {
       // Fallback: get user ID from auth service
       const user = AuthService.getCurrentUser();
+      console.log('User from auth service:', user);
       if (user && user.UserID) {
         fetchWatchlist(user.UserID);
       } else {

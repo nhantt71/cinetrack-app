@@ -87,15 +87,21 @@ export default function FavoritesPage() {
   };
 
   useEffect(() => {
-    // Get UserID from URL or from authenticated user
-    const pathParts = window.location.pathname.split('/');
+    // Get UserID from URL hash or from authenticated user
+    const hashPath = window.location.hash.substring(1); // Remove the # symbol
+    const pathParts = hashPath.split('/');
     const userIdFromUrl = pathParts[pathParts.length - 1];
     
-    if (userIdFromUrl && userIdFromUrl !== 'favorites') {
+    console.log('Hash path:', hashPath);
+    console.log('Path parts:', pathParts);
+    console.log('User ID from URL:', userIdFromUrl);
+    
+    if (userIdFromUrl && userIdFromUrl !== 'favorites' && userIdFromUrl.length > 10) {
       fetchFavorites(userIdFromUrl);
     } else {
       // Fallback: get user ID from auth service
       const user = AuthService.getCurrentUser();
+      console.log('User from auth service:', user);
       if (user && user.UserID) {
         fetchFavorites(user.UserID);
       } else {

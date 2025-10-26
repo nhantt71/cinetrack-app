@@ -12,7 +12,7 @@ export default function WatchlistPage() {
   const navigate = useNavigate();
   const [wantToWatch, setWantToWatch] = useState([]);
   const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Temporarily set to false for debugging
   const [error, setError] = useState(null);
 
   const fetchWatchlist = async (userId) => {
@@ -68,8 +68,10 @@ export default function WatchlistPage() {
         const wantToWatchMovies = await Promise.all(
           wantToWatchItems.map(async (item) => {
             const movieDetails = await fetchMovieDetails(item.MovieID);
+            console.log('Want to watch - Movie details structure for item:', item, 'details:', movieDetails);
             if (movieDetails && movieDetails.data) {
               const movie = movieDetails.data;
+              console.log('Processing want to watch movie:', movie);
               return {
                 id: movie.id,
                 title: movie.title,
@@ -92,6 +94,7 @@ export default function WatchlistPage() {
         const watchedMovies = await Promise.all(
           watchedItems.map(async (item) => {
             const movieDetails = await fetchMovieDetails(item.MovieID);
+            console.log('Watched - Movie details structure for item:', item, 'details:', movieDetails);
             if (movieDetails && movieDetails.data) {
               const movie = movieDetails.data;
               return {
@@ -120,6 +123,8 @@ export default function WatchlistPage() {
         
         console.log('Final state - wantToWatch length:', wantToWatchMovies.length);
         console.log('Final state - watched length:', watchedMovies.length);
+        console.log('Setting state - wantToWatch:', wantToWatchMovies);
+        console.log('Setting state - watched:', watchedMovies);
       } else {
         setError("Failed to fetch watchlist");
       }
@@ -127,6 +132,7 @@ export default function WatchlistPage() {
       setError("Network error. Please try again.");
       console.error("Watchlist fetch error:", err);
     } finally {
+      console.log('Setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -168,6 +174,8 @@ export default function WatchlistPage() {
     }
   };
 
+  console.log('Render - isLoading:', isLoading, 'wantToWatch.length:', wantToWatch.length, 'watched.length:', watched.length, 'error:', error);
+  
   if (isLoading) {
     return (
       <div className="min-h-screen">

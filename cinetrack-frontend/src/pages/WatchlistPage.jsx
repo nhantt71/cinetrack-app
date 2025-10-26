@@ -34,6 +34,8 @@ export default function WatchlistPage() {
 
       if (response.ok) {
         const watchlistData = await response.json();
+
+        console.log(watchlistData);
         
         // Classify movies into want_to_watch and watched
         const wantToWatchItems = watchlistData.filter(item => item.Status === "want_to_watch");

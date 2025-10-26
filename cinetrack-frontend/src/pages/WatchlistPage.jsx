@@ -30,22 +30,33 @@ export default function WatchlistPage() {
       if (response.ok) {
         const watchlistData = await response.json();
 
-        console.log(watchlistData);
+        console.log('Raw watchlist data:', watchlistData);
         
         // Classify movies into want_to_watch and watched
         const wantToWatchItems = watchlistData.filter(item => item.Status === "want_to_watch");
         const watchedItems = watchlistData.filter(item => item.Status === "watched");
         
+        console.log('Want to watch items:', wantToWatchItems);
+        console.log('Watched items:', watchedItems);
+        
         // Fetch movie details for each item
         const fetchMovieDetails = async (movieId) => {
           try {
+            console.log(`Fetching details for movie ${movieId}`);
+            const token = AuthService.getToken();
             const response = await fetch(endpoints.getMovieDetails(movieId), {
               headers: {
+                ...(token && { "Authorization": `Bearer ${token}` }),
                 "Content-Type": "application/json",
               },
             });
+            console.log(`Response status for movie ${movieId}:`, response.status);
             if (response.ok) {
-              return await response.json();
+              const movieData = await response.json();
+              console.log(`Movie data for ${movieId}:`, movieData);
+              return movieData;
+            } else {
+              console.error(`Failed to fetch movie ${movieId}, status: ${response.status}`);
             }
           } catch (err) {
             console.error(`Failed to fetch details for movie ${movieId}:`, err);
@@ -101,8 +112,14 @@ export default function WatchlistPage() {
           })
         ).then(movies => movies.filter(movie => movie !== null));
         
+        console.log('Processed want to watch movies:', wantToWatchMovies);
+        console.log('Processed watched movies:', watchedMovies);
+        
         setWantToWatch(wantToWatchMovies);
         setWatched(watchedMovies);
+        
+        console.log('Final state - wantToWatch length:', wantToWatchMovies.length);
+        console.log('Final state - watched length:', watchedMovies.length);
       } else {
         setError("Failed to fetch watchlist");
       }

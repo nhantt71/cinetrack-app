@@ -1,6 +1,6 @@
 import Hero from "@/components/Hero";
 import MovieCarousel from "@/components/MovieCarousel";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { endpoints } from "@/services/backendApi";
 import { useState, useEffect } from "react";
 import { AuthService } from "@/services/AuthService";
@@ -18,7 +18,7 @@ const featuredMovie = {
 
 
 export default function HomePage() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
@@ -78,7 +78,7 @@ export default function HomePage() {
 
 
   const handleMovieClick = (movieId) => {
-    setLocation(`/movie/${movieId}`);
+    navigate(`/movie/${movieId}`);
   };
 
   const handleAddToWatchlist = async (movieId) => {

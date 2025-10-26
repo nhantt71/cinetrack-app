@@ -4,14 +4,14 @@ import MovieCard from "@/components/MovieCard";
 import EmptyState from "@/components/EmptyState";
 import { MovieGridSkeleton } from "@/components/LoadingSkeleton";
 import { Film, Search } from "lucide-react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { endpoints } from "@/services/backendApi";
 import { AuthService } from "@/services/AuthService";
 
 const IMAGE_BASE_POSTER = "https://image.tmdb.org/t/p/w500";
 
 export default function SearchPage() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -165,7 +165,7 @@ export default function SearchPage() {
   };
 
   const handleMovieClick = (movieId) => {
-    setLocation(`/movie/${movieId}`);
+    navigate(`/movie/${movieId}`);
   };
 
   const handleGenreToggle = (genreName) => {

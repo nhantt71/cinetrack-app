@@ -3,13 +3,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MovieCard from "@/components/MovieCard";
 import EmptyState from "@/components/EmptyState";
 import { List, CheckCircle } from "lucide-react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { endpoints } from "@/services/backendApi";
 import { AuthService } from "@/services/AuthService";
 
 
 export default function WatchlistPage() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [wantToWatch, setWantToWatch] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,7 +140,7 @@ export default function WatchlistPage() {
   }, []);
 
   const handleMovieClick = (movieId) => {
-    setLocation(`/movie/${movieId}`);
+    navigate(`/movie/${movieId}`);
   };
 
   const handleRemoveFromWatchlist = (movieId, status) => {
@@ -222,7 +222,7 @@ export default function WatchlistPage() {
                 title="No movies in your watchlist"
                 description="Start adding movies you want to watch to keep track of them here."
                 actionLabel="Browse Movies"
-                onAction={() => setLocation("/search")}
+                onAction={() => navigate("/search")}
               />
             )}
           </TabsContent>
@@ -246,7 +246,7 @@ export default function WatchlistPage() {
                 title="No watched movies yet"
                 description="Mark movies as watched to keep track of what you've seen and rate them."
                 actionLabel="Browse Movies"
-                onAction={() => setLocation("/search")}
+                onAction={() => navigate("/search")}
               />
             )}
           </TabsContent>

@@ -492,23 +492,19 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 
 ### Home Page
 <img width="1878" height="952" alt="image" src="https://github.com/user-attachments/assets/b6a30059-bab4-456e-ae9f-1c6d2f202cec" />
-)
-*Browse trending and popular movies*
+
 
 ### Movie Details
 <img width="1879" height="951" alt="image" src="https://github.com/user-attachments/assets/cd1dd579-2d92-4117-af8d-2866dd1f5ee7" />
-)
-*Detailed information with cast, crew, and trailer*
+
 
 ### Watchlist
 <img width="1872" height="945" alt="{12FA26EA-F292-4DDF-A945-125798E18A2C}" src="https://github.com/user-attachments/assets/72d9468c-0bc9-490c-a2f7-0fe0a9f77fbe" />
-)
-*Manage your personal movie collection*
+
 
 ### Search
-![Search](<img width="1884" height="939" alt="image" src="https://github.com/user-attachments/assets/bf1ee5ed-a010-4b6d-948b-20d1cd7ba11a" />
-)
-*Search through millions of movies*
+<img width="1884" height="939" alt="image" src="https://github.com/user-attachments/assets/bf1ee5ed-a010-4b6d-948b-20d1cd7ba11a" />
+
 
 ---
 

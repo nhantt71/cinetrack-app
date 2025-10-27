@@ -1,4 +1,4 @@
-import { Star, Plus, Check, Play } from "lucide-react";
+import { Star, Plus, Check, Play, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -12,6 +12,7 @@ export default function MovieCard({
   year,
   isInWatchlist = false,
   status,
+  watchlistStatus,
   userRating,
   onAddToWatchlist,
   onRemoveFromWatchlist,
@@ -20,6 +21,10 @@ export default function MovieCard({
   const [isHovered, setIsHovered] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(isInWatchlist);
   const navigate = useNavigate();
+  
+  // Use watchlistStatus if available, otherwise fall back to status
+  const currentStatus = watchlistStatus || status;
+  
   const handleWatchlistToggle = (e) => {
     e.stopPropagation();
     if (inWatchlist) {
@@ -62,12 +67,19 @@ export default function MovieCard({
           </div>
         )}
 
-        {status && (
+        {/* Watched Badge - Top Right Corner */}
+        {currentStatus === "watched" && (
+          <div className="absolute top-2 right-2 z-10 bg-green-500 rounded-full p-1.5 shadow-lg">
+            <CheckCircle className="h-4 w-4 text-white" fill="white" />
+          </div>
+        )}
+
+        {currentStatus && (
           <Badge
-            variant={status === "watched" ? "default" : "secondary"}
+            variant={currentStatus === "watched" ? "default" : "secondary"}
             className="absolute top-2 left-2 bg-background/90 backdrop-blur-sm"
           >
-            {status === "watched" ? "Watched" : "Want to Watch"}
+            {currentStatus === "watched" ? "Watched" : "Want to Watch"}
           </Badge>
         )}
 

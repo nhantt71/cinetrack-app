@@ -85,7 +85,7 @@ CineTrack is a Netflix-style movie discovery platform that allows users to brows
               │              │              │
               ▼              ▼              ▼
         ┌─────────┐    ┌─────────┐   ┌─────────┐
-        │ Lambda  │    │ Lambda  │   │ Lambda  │  (11 Functions)
+        │ Lambda  │    │ Lambda  │   │ Lambda  │  (15 Functions)
         │ Search  │    │ Details │   │Watchlist│
         └────┬────┘    └────┬────┘   └────┬────┘
              │              │              │
@@ -117,7 +117,7 @@ CineTrack is a Netflix-style movie discovery platform that allows users to brows
 - **Lucide React** - Beautiful icon library
 
 ### Backend (AWS Services)
-- **AWS Lambda** - Serverless compute (11 functions)
+- **AWS Lambda** - Serverless compute (15 functions)
 - **API Gateway** - RESTful API endpoints
 - **DynamoDB** - NoSQL database with GSIs
 - **S3** - Static website hosting
@@ -149,7 +149,7 @@ CineTrack is a Netflix-style movie discovery platform that allows users to brows
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/cinetrack-app.git
+   git clone https://github.com/nhantt71/cinetrack-app.git
    cd cinetrack-app
    ```
 
@@ -471,9 +471,9 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 
 **Your Name**
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+- GitHub: [@yourusername](https://github.com/nhantt71)
+- LinkedIn: [Your Name](https://www.linkedin.com/in/nhan-to-41873b298/)
+- Email: tonhanlk7103@gmail.com
 - Portfolio: [yourportfolio.com](https://yourportfolio.com)
 
 ---
@@ -491,19 +491,23 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 ## 📸 Screenshots
 
 ### Home Page
-![Home Page](screenshots/home.png)
+![Home Page](<img width="1878" height="952" alt="image" src="https://github.com/user-attachments/assets/b6a30059-bab4-456e-ae9f-1c6d2f202cec" />
+)
 *Browse trending and popular movies*
 
 ### Movie Details
-![Movie Details](screenshots/details.png)
+![Movie Details](<img width="1879" height="951" alt="image" src="https://github.com/user-attachments/assets/cd1dd579-2d92-4117-af8d-2866dd1f5ee7" />
+)
 *Detailed information with cast, crew, and trailer*
 
 ### Watchlist
-![Watchlist](screenshots/watchlist.png)
+![Watchlist](<img width="1872" height="945" alt="{12FA26EA-F292-4DDF-A945-125798E18A2C}" src="https://github.com/user-attachments/assets/72d9468c-0bc9-490c-a2f7-0fe0a9f77fbe" />
+)
 *Manage your personal movie collection*
 
 ### Search
-![Search](screenshots/search.png)
+![Search](<img width="1884" height="939" alt="image" src="https://github.com/user-attachments/assets/bf1ee5ed-a010-4b6d-948b-20d1cd7ba11a" />
+)
 *Search through millions of movies*
 
 ---

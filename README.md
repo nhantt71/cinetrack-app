@@ -469,12 +469,11 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 
 ## 👨‍💻 Author
 
-**Your Name**
+To Trong Nhan
 
-- GitHub: [@yourusername](https://github.com/nhantt71)
-- LinkedIn: [Your Name](https://www.linkedin.com/in/nhan-to-41873b298/)
+- GitHub: https://github.com/nhantt71
+- LinkedIn: https://www.linkedin.com/in/nhan-to-41873b298/
 - Email: tonhanlk7103@gmail.com
-- Portfolio: [yourportfolio.com](https://yourportfolio.com)
 
 ---
 
